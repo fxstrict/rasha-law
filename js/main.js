@@ -484,7 +484,61 @@
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       const swPath = document.body.getAttribute("data-root") === "blog" ? "../service-worker.js" : "service-worker.js";
-      navigator.serviceWorker.register(swPath).catch(() => {});
+      navigator.serviceWorker
+        .register(swPath)
+        .then((registration) => {
+          // فحص فوري لوجود إصدار جديد عند تحميل الصفحة
+          registration.update().catch(() => {});
+
+          // فحص دوري كل 45 ثانية طالما الصفحة مفتوحة
+          setInterval(() => registration.update().catch(() => {}), 45000);
+
+          // فحص فوري عند رجوع المستخدم للتبويب بعد تركه
+          document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+              registration.update().catch(() => {});
+            }
+          });
+
+          function showUpdateToast(waitingWorker) {
+            const updateToast = document.querySelector(".update-toast");
+            if (!updateToast) return;
+            updateToast.classList.add("is-visible");
+            const refreshBtn = updateToast.querySelector(".ut-refresh");
+            const dismissBtn = updateToast.querySelector(".ut-dismiss");
+            let reloading = false;
+            navigator.serviceWorker.addEventListener("controllerchange", () => {
+              if (reloading) return;
+              reloading = true;
+              window.location.reload();
+            });
+            refreshBtn &&
+              refreshBtn.addEventListener("click", () => {
+                waitingWorker.postMessage({ type: "SKIP_WAITING" });
+              });
+            dismissBtn &&
+              dismissBtn.addEventListener("click", () => {
+                updateToast.classList.remove("is-visible");
+              });
+          }
+
+          // إصدار جديد بالفعل بانتظار التفعيل (مثلاً عند فتح الصفحة من جديد)
+          if (registration.waiting && registration.active) {
+            showUpdateToast(registration.waiting);
+          }
+
+          // إصدار جديد يتم تثبيته أثناء تصفح المستخدم للصفحة
+          registration.addEventListener("updatefound", () => {
+            const newWorker = registration.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener("statechange", () => {
+              if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                showUpdateToast(newWorker);
+              }
+            });
+          });
+        })
+        .catch(() => {});
     });
   }
 
