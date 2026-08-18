@@ -3,7 +3,7 @@
  * استراتيجية التخزين المؤقت: App Shell + Stale-While-Revalidate للمحتوى،
  * Cache First للأصول الثابتة (خطوط/أيقونات/CSS/JS)، وصفحة Offline احتياطية.
  */
-const VERSION = "v1.0.12";
+const VERSION = "v1.0.2";
 const APP_SHELL_CACHE = `rasha-shell-${VERSION}`;
 const RUNTIME_CACHE = `rasha-runtime-${VERSION}`;
 const OFFLINE_URL = "offline.html";
@@ -27,8 +27,14 @@ const APP_SHELL_FILES = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(APP_SHELL_CACHE).then((cache) => cache.addAll(APP_SHELL_FILES)).then(() => self.skipWaiting())
+    caches.open(APP_SHELL_CACHE).then((cache) => cache.addAll(APP_SHELL_FILES))
   );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("activate", (event) => {
