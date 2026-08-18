@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>غير متصلة بالإنترنت | رشا حسن</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="icons/favicon.ico" sizes="any">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .offline-page {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 40px 20px;
+      background: radial-gradient(ellipse at 30% 0%, #241b13 0%, var(--c-black) 62%);
+      color: var(--text-on-dark);
+    }
+    .offline-page img { width: 64px; margin: 0 auto 22px; }
+    .offline-page h1 { font-size: 24px; font-weight: 800; color: var(--c-ivory); }
+    .offline-page p { margin-top: 12px; color: var(--text-on-dark-soft); max-width: 420px; margin-inline: auto; }
+    .offline-page .btn { margin-top: 26px; }
+  </style>
+</head>
+<body>
+  <div class="offline-page">
+    <div>
+      <img src="icons/icon-192.png" alt="">
+      <h1>أنتِ الآن غير متصلة بالإنترنت</h1>
+      <p>يمكنك تصفح الصفحة الرئيسية والمقالات التي زرتِها سابقًا. بيانات التواصل الأساسية متاحة دائمًا حتى بدون إنترنت.</p>
+      <p style="margin-top:22px; font-size:14px">هاتف / واتساب: 01060889809</p>
+      <a href="index.html" class="btn btn-gold">العودة للصفحة الرئيسية</a>
+    </div>
+  </div>
+  <script>
+    window.addEventListener('online', () => window.location.reload());
+  </script>
+</body>
+</html>
