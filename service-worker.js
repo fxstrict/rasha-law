@@ -3,10 +3,10 @@
  * استراتيجية التخزين المؤقت: App Shell + Stale-While-Revalidate للمحتوى،
  * Cache First للأصول الثابتة (خطوط/أيقونات/CSS/JS)، وصفحة Offline احتياطية.
  */
-const VERSION = "v1.0.0";
+const VERSION = "v1.0.1";
 const APP_SHELL_CACHE = `rasha-shell-${VERSION}`;
 const RUNTIME_CACHE = `rasha-runtime-${VERSION}`;
-const OFFLINE_URL = "offline.html";
+const OFFLINE_URL = new URL("offline.html", self.registration.scope).href;
 
 const APP_SHELL_FILES = [
   "index.html",
