@@ -31,6 +31,59 @@
   }
   bindWhatsAppButtons();
 
+  /* ---------- مشاركة المقال (واتساب / فيسبوك / X / نسخ الرابط / مشاركة الجهاز) ---------- */
+  function bindArticleShare() {
+    const container = document.querySelector("[data-article-share]");
+    if (!container) return;
+
+    const titleMeta = document.querySelector('meta[property="og:title"]');
+    const descMeta = document.querySelector('meta[property="og:description"]');
+    const canonical = document.querySelector('link[rel="canonical"]');
+
+    const shareTitle = (titleMeta && titleMeta.content) || document.title;
+    const shareText = (descMeta && descMeta.content) || "";
+    const shareUrl = (canonical && canonical.href) || window.location.href;
+    const shareMessage = `${shareTitle}\n${shareText}\n${shareUrl}`;
+
+    const waBtn = container.querySelector(".share-whatsapp");
+    const fbBtn = container.querySelector(".share-facebook");
+    const xBtn = container.querySelector(".share-x");
+    const copyBtn = container.querySelector(".share-copy");
+    const nativeBtn = container.querySelector(".share-native");
+
+    if (waBtn) waBtn.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
+    if (fbBtn) fbBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+    if (xBtn) xBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`;
+
+    if (copyBtn) {
+      copyBtn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          const original = copyBtn.getAttribute("title");
+          copyBtn.setAttribute("title", "تم نسخ الرابط ✓");
+          copyBtn.setAttribute("aria-label", "تم نسخ الرابط");
+          setTimeout(() => {
+            copyBtn.setAttribute("title", original);
+            copyBtn.setAttribute("aria-label", original);
+          }, 2000);
+        } catch (e) {}
+      });
+    }
+
+    if (nativeBtn) {
+      if (navigator.share) {
+        nativeBtn.addEventListener("click", async () => {
+          try {
+            await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+          } catch (e) {}
+        });
+      } else {
+        nativeBtn.style.display = "none";
+      }
+    }
+  }
+  bindArticleShare();
+
   /* ---------- الهيدر: تأثير التمرير ---------- */
   const header = document.querySelector(".site-header");
   if (header) {
